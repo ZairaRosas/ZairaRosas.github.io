@@ -1,1 +1,207 @@
-Hello World
+<!--Velocidad-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Velocidad promedio</title>
+        <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""
+    />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script
+        src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""
+    ></script>
+  </script>
+  
+    <script type="text/javascript" src="leaflet-side-by-side.js"></script>
+    <script type="text/javascript" src="nay13.js"></script>
+    <script type="text/javascript" src="nay19.js"></script>
+    </head>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+        #map {
+            width: 600px;
+            height: 400px;
+        }
+        .legend {
+                text-align: left;
+                line-height: 40px;
+                color: #555;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 20px;
+            }
+            .legend i {
+                width: 40px;
+                height: 40px;
+                float: left;
+                margin-right: 8px;
+                opacity: 0.7;
+            }
+    </style>
+    <body>
+
+        <div id="mapid" style="width: 100%; height: 100%;"></div>
+        <script>
+        
+        var mimapa = L.map('mapid', {
+            zoomControl: false
+        });
+        
+        mimapa.createPane('left');
+        mimapa.setView([21.4, -105],10);
+        mimapa.createPane('right');
+
+       
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png', {
+            maxZoom: 100,
+      		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' + 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      		tileSize: 512,
+      		zoomOffset: -1
+        }).addTo(mimapa);
+
+        function getColor(d) {
+                return  d < 1.0 ? '#3b3b3b':
+                        d < 28.0  ? '#ff0000' :
+                        d < 53.0  ? '#ff8000' :
+                        d < 79.0  ? '#ffff00' :
+                        d < 104.0  ? '#8bd100' :
+                        d > 104.0  ? '#14a803' :
+                                    '#14a803';
+            }
+            function style(feature) {
+                return {
+                    weight: 2,
+                    opacity: 1,
+                    color: getColor(feature.properties.Avg_Value_)
+                };
+            }
+            function highlightFeature(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                })
+
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    layer.bringToFront();
+                }
+
+                info.update(layer.feature.properties);
+            }
+            function resetHighlight(e) {
+                overlay1.resetStyle(e.target);
+                info.update();
+            }
+
+            function onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+
+                })
+                layer.bindPopup('<b>Velocidad promedio 2013: ' + feature.properties.Avg_Value_ + '<br/><br/>');
+            }
+
+            var overlay1 = L.geoJson(vel13, {
+                style: style,
+                pane: 'left',
+                onEachFeature: onEachFeature
+            }).addTo(mimapa);
+
+            var legend = L.control({position: 'bottomleft'});
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend'),
+                    grades = [1.0, 28.0, 53.0, 79.0, 104.0],
+                    labels = ['<strong>Velocidad promedio</strong>' + '</br>' +
+                     '2013 | 2019'],
+                    from, to;
+
+                    for (var i = 0; i < grades.length; i++) {
+                        from = grades[i];
+                        to = grades[i + 1];
+
+                        labels.push(
+                            '<i style="background:' + getColor(from + 1) + '"></i> ' +
+                            from + (to ? '&ndash;' + to : '+'));
+                    }
+
+                div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+            legend.addTo(mimapa);
+
+            function getColor1(d) {
+                return  d < 1.0 ? '#3b3b3b':
+                        d < 28.0  ? '#ff0000' :
+                        d < 53.0  ? '#ff8000' :
+                        d < 79.0  ? '#ffff00' :
+                        d < 104.0  ? '#8bd100' :
+                        d > 104.0  ? '#14a803' :
+                                    '#14a803';
+            }
+
+            function style1(feature1) {
+                return {
+                    weight: 2,
+                    opacity: 1,
+                    color: getColor1(feature1.properties.sweek)
+                };
+            }
+            function highlightFeature1(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                })
+
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    layer.bringToFront();
+                }
+
+                info.update(layer.feature.properties);
+            }
+            function resetHighlight1(e) {
+                overlay2.resetStyle(e.target);
+                info.update();
+            }
+
+            function onEachFeature1(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature1,
+                    mouseout: resetHighlight1,
+
+                })
+                layer.bindPopup('<b>Velocidad promedio 2019: ' + feature.properties.sweek);
+            }
+
+            var overlay2 = L.geoJson(vel19, {
+                style: style1,
+                pane: 'right',
+                onEachFeature: onEachFeature1
+            }).addTo(mimapa);
+
+
+            var legend1 = L.control({position: 'bottomright'});
+
+            L.control.sideBySide(overlay1, overlay2).addTo(mimapa);  
+            
+        </script>
+    </body>
+</html>
